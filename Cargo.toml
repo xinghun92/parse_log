@@ -1,0 +1,9 @@
+[package]
+name = "lark_log"
+version = "0.1.0"
+authors = ["wangsijie <wangsijie@bytedance.com>"]
+
+[dependencies]
+serde_json = "1.0"
+serde_derive = "1.0.0"
+serde = "1.0.0"
