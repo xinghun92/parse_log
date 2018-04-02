@@ -1,5 +1,5 @@
 [root]
-name = "lark_log"
+name = "parse_log"
 version = "0.1.0"
 dependencies = [
  "serde 1.0.36 (registry+https://github.com/rust-lang/crates.io-index)",

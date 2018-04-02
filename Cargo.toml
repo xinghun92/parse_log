@@ -1,5 +1,5 @@
 [package]
-name = "lark_log"
+name = "parse_log"
 version = "0.1.0"
 authors = ["wangsijie <wangsijie@bytedance.com>"]
 
