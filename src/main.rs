@@ -1,11 +1,13 @@
 extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 extern crate serde;
+extern crate chrono;
 
 use std::env::current_dir;
 use std::fs::{read_dir, rename, File, remove_file};
 use std::path::{Path, PathBuf};
 use std::io::{Result, BufReader, Write, BufRead};
+use chrono::DateTime;
 
 #[derive(Serialize, Deserialize)]
 struct Message<'a> {
@@ -61,8 +63,9 @@ fn parse_log_impl(from: &PathBuf, to: &PathBuf) -> Result<()> {
 fn get_parsed_line(line: &str) -> String {
     match serde_json::from_str::<Message>(&line) {
         Ok(line) => {
-            format!("{} {} {} {} {} - {}\n",
-                    line.time, line.level, line.pid, line.thread.unwrap_or("unknown"), line.file, line.message)
+            let time = DateTime::parse_from_rfc3339(line.time).expect("Invalid time format").format("%m-%d %H:%M:%S");
+            format!("{} {} {} {} {}:{} - {}\n",
+                    time, line.level, line.pid, line.thread.unwrap_or("unknown"), line.file, line.line, line.message)
         }
         Err(_) => format!("{}\n", line)
     }
@@ -75,6 +78,6 @@ mod tests {
     fn test_log() {
         let log = r#"{"time":"2018-04-01T22:38:05.302529+08:00","message":"adding \"/Users/dinghao/Library/Application Support/Lark/sdk_storage/log/fe29.log\" as \"fe29.log\" ...","module_path":"lark_logic::utils","file":"lark-logic/src/utils.rs","line":89,"level":"INFO","target":"lark_logic::utils","thread":"invoke-2","pid":33702,"mdc":{}}"#;
         let log = get_parsed_line(log);
-        assert_eq!(log, format!("{}\n", r#"2018-04-01T22:38:05.302529+08:00 INFO 33702 invoke-2 lark-logic/src/utils.rs - adding "/Users/dinghao/Library/Application Support/Lark/sdk_storage/log/fe29.log" as "fe29.log" ..."#));
+        assert_eq!(log, format!("{}\n", r#"04-01 22:38:05 INFO 33702 invoke-2 lark-logic/src/utils.rs:89 - adding "/Users/dinghao/Library/Application Support/Lark/sdk_storage/log/fe29.log" as "fe29.log" ..."#));
     }
 }
