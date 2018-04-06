@@ -14,7 +14,7 @@ struct Message<'a> {
     time: &'a str,
     message: String,
     module_path: &'a str,
-    file: &'a str,
+    file: String,
     line: u32,
     level: &'a str,
     target: &'a str,
@@ -79,5 +79,12 @@ mod tests {
         let log = r#"{"time":"2018-04-01T22:38:05.302529+08:00","message":"adding \"/Users/dinghao/Library/Application Support/Lark/sdk_storage/log/fe29.log\" as \"fe29.log\" ...","module_path":"lark_logic::utils","file":"lark-logic/src/utils.rs","line":89,"level":"INFO","target":"lark_logic::utils","thread":"invoke-2","pid":33702,"mdc":{}}"#;
         let log = get_parsed_line(log);
         assert_eq!(log, format!("{}\n", r#"04-01 22:38:05 INFO 33702 invoke-2 lark-logic/src/utils.rs:89 - adding "/Users/dinghao/Library/Application Support/Lark/sdk_storage/log/fe29.log" as "fe29.log" ..."#));
+    }
+
+    #[test]
+    fn test_windows_log() {
+        let log = r#"{"time":"2018-04-04T11:08:00.656803400+08:00","message":"fetch: cmd= 0 cost= 863","module_path":"lib_net::client::fetch","file":"lib-net\\src\\client\\fetch.rs","line":229,"level":"INFO","target":"lib_net::client::fetch","thread":"t:tokio","pid":1960,"mdc":{"cmd":"0","cost":"863"}}"#;
+        let log = get_parsed_line(log);
+        assert_eq!(log, format!("{}\n", r#"04-04 11:08:00 INFO 1960 t:tokio lib-net\src\client\fetch.rs:229 - fetch: cmd= 0 cost= 863"#));
     }
 }
